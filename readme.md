@@ -1,4 +1,4 @@
-#Pnmsg
+# Pnmsg
 
 This is a really basic command line tool for appending messages to PNG files.
 It's a suggested project for those learning Rust (which I started with a couple
@@ -6,7 +6,7 @@ of weeks ago).
 
 You can encode a message with 
 ```
-cargo run encode [file] [chunk_type] [message] [output]`
+cargo run encode [file] [chunk_type] [message] [output]
 ```
 and decode with
 ```
