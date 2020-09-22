@@ -16,4 +16,4 @@ cargo run decode [file] [chunk_type]
 `chunk_type` must be 4 characters and ASCII alphabetic, the third character
 should be uppercase such as `olLy`, if you decode `message.png` you'll find
 a message in there, alternatively you could just open the file in a text editor
-and find the message that way, (it's really not the best way to hide messages).
+and find the message that way, (it's really not the best way to hide secrets).
