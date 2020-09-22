@@ -8,7 +8,6 @@ mod png;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = args::Command::from_args();
 
-    println!("{:?}", opt);
     match opt {
         args::Command::Encode {
             file,
