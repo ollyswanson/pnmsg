@@ -32,7 +32,7 @@ impl<R: Read> PngReader<R> {
         let chunk_type: ChunkType = TryFrom::try_from(chunk_type)?;
 
         let mut left_to_read = length as usize;
-        let mut data = Vec::with_capacity(left_to_read);
+        let mut data = Vec::new();
 
         while left_to_read > 0 {
             let buf = self.reader.fill_buf()?;
@@ -61,7 +61,7 @@ impl<R: Read> PngReader<R> {
         })
     }
 
-    fn read_png(mut self) -> Result<Png, ReaderError> {
+    pub fn read_png(mut self) -> Result<Png, ReaderError> {
         let mut header = [0; 8];
         self.reader.read_exact(&mut header)?;
         if header != Png::HEADER {
