@@ -31,25 +31,29 @@ impl ChunkType {
 }
 
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
-pub enum InvalidChunkType {
-    #[error("reserved bit set")]
+pub enum FormatError {
+    #[error("chunk type reserved bit set")]
     Reserved,
-    #[error("must be ascii alphabetic")]
-    InvalidFormat,
+    #[error("chunk type must be ascii alphabetic")]
+    InvalidChunkType,
+    #[error("unexpected end of file")]
+    UnexpectedEof,
+    #[error("invalid header")]
+    InvalidHeader,
 }
 
 impl TryFrom<[u8; 4]> for ChunkType {
-    type Error = InvalidChunkType;
+    type Error = FormatError;
 
     fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
         if !value.iter().all(u8::is_ascii_alphabetic) {
-            return Err(InvalidChunkType::InvalidFormat);
+            return Err(FormatError::InvalidChunkType);
         }
 
         let chunk_type = ChunkType(value);
 
         if chunk_type.reserved_set() {
-            return Err(InvalidChunkType::Reserved);
+            return Err(FormatError::Reserved);
         }
 
         Ok(chunk_type)
@@ -94,8 +98,8 @@ mod tests {
     #[test]
     fn errors_when_parsing_invalid_chunk() {
         let cases = [
-            (b"Rust", InvalidChunkType::Reserved),
-            (b"RuS7", InvalidChunkType::InvalidFormat),
+            (b"Rust", FormatError::Reserved),
+            (b"RuS7", FormatError::InvalidChunkType),
         ];
 
         for (input, expected) in cases {
