@@ -3,3 +3,4 @@ mod cli;
 mod png;
 mod reader;
 pub mod run;
+mod writer;

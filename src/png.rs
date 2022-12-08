@@ -37,4 +37,8 @@ impl Png {
             .rev()
             .find(|chunk| chunk.type_.as_bytes() == type_.as_ref())
     }
+
+    pub fn into_chunks(self) -> Vec<Chunk> {
+        self.chunks
+    }
 }

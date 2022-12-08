@@ -9,6 +9,7 @@ pub enum Cli {
         file: PathBuf,
         chunk_type: String,
         message: String,
+        output: Option<PathBuf>,
     },
     Decode {
         file: PathBuf,

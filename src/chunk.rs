@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct ChunkType([u8; 4]);
@@ -34,7 +35,7 @@ impl ChunkType {
 pub enum FormatError {
     #[error("chunk type reserved bit set")]
     Reserved,
-    #[error("chunk type must be ascii alphabetic")]
+    #[error("chunk type must be 4 ascii alphabetic chars")]
     InvalidChunkType,
     #[error("unexpected end of file")]
     UnexpectedEof,
@@ -57,6 +58,19 @@ impl TryFrom<[u8; 4]> for ChunkType {
         }
 
         Ok(chunk_type)
+    }
+}
+
+impl FromStr for ChunkType {
+    type Err = FormatError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut bytes = [0; 4];
+        for (i, b) in s.bytes().take(4).enumerate() {
+            bytes[i] = b;
+        }
+
+        bytes.try_into()
     }
 }
 
