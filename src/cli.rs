@@ -15,6 +15,13 @@ pub enum Cli {
         file: PathBuf,
         chunk_type: String,
     },
+    Remove {
+        file: PathBuf,
+        chunk_type: String,
+    },
+    Print {
+        file: PathBuf,
+    },
 }
 
 pub fn parse_args() -> Cli {

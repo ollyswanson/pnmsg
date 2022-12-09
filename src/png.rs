@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::chunk::Chunk;
 
 pub struct Png {
@@ -15,27 +17,35 @@ impl Png {
         self.chunks.push(chunk);
     }
 
-    pub fn remove_chunk<T: AsRef<[u8]>>(&mut self, type_: T) {
-        // Search from the back as we are usually looking for a chunk that has been added at the
-        // end
-        if let Some(pos) = self
-            .chunks
-            .iter()
-            .rev()
-            .position(|chunk| chunk.type_.as_bytes() == type_.as_ref())
-            .map(|pos| self.chunks.len() - pos - 1)
-        {
-            self.chunks.remove(pos);
-        }
+    /// Removes all chunks matching the given type and returns the number of chunks removed
+    pub fn remove_all<T: AsRef<[u8]>>(&mut self, type_: T) -> usize {
+        let len = self.chunks.len();
+        self.chunks
+            .retain(|chunk| chunk.type_.as_bytes() != type_.as_ref());
+        len - self.chunks.len()
     }
 
-    pub fn chunk_by_type<T: AsRef<[u8]>>(&self, type_: T) -> Option<&Chunk> {
+    /// Returns an iterator with all of the chunks matching the given type
+    pub fn chunks_by_type<T: AsRef<[u8]>>(&self, type_: T) -> impl Iterator<Item = &Chunk> {
         // Search from the back as we are usually looking for a chunk that has been added at the
         // end.
         self.chunks
             .iter()
-            .rev()
-            .find(|chunk| chunk.type_.as_bytes() == type_.as_ref())
+            .filter(move |chunk| chunk.type_.as_bytes() == type_.as_ref())
+    }
+
+    /// Returns a deduplicated and sorted list of all of the chunk types
+    pub fn chunk_types(&self) -> Vec<Cow<'_, str>> {
+        let mut chunk_types: Vec<Cow<'_, str>> = self
+            .chunks
+            .iter()
+            .map(|chunk| String::from_utf8_lossy(chunk.type_.as_bytes()))
+            .collect();
+
+        chunk_types.sort_unstable();
+        chunk_types.dedup();
+
+        chunk_types
     }
 
     pub fn into_chunks(self) -> Vec<Chunk> {

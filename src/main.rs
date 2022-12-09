@@ -1,5 +1,5 @@
 use pnmsg::run::run;
 
-fn main() {
-    run().unwrap();
+fn main() -> anyhow::Result<()> {
+    run()
 }
